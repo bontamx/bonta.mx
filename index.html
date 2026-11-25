@@ -502,9 +502,9 @@ function calcularCombos(ls, combos) {
   let total = 0; const aplicados = [];
   (combos || []).forEach(c => {
     const k = norm(c.principal);
-    const pal = k.split('_').filter(w => w.length > 2 && !['con', 'los', 'las', 'del'].includes(w));
-    const coincide = p => norm(p.id) === k || (pal.length > 0 && pal.every(w => norm(p.nombre).includes(w)));
-    const princ = un.filter(u => !u.usada && k && coincide(u.p));
+    const alts = String(c.principal || '').split(';').map(x => norm(x)).filter(Boolean).map(kk => ({ kk, pal: kk.split('_').filter(w => w.length > 2 && !['con', 'los', 'las', 'del'].includes(w)) }));
+    const coincide = p => alts.some(({ kk, pal }) => norm(p.id) === kk || (pal.length > 0 && pal.every(w => norm(p.nombre).includes(w))));
+    const princ = un.filter(u => !u.usada && alts.length && coincide(u.p));
     const comp = un.filter(u => !u.usada && !princ.includes(u) && catKey(u.p.categoria) === catKey(c.categoria)).sort((a, b) => b.p.precio - a.p.precio);
     const pares = Math.min(princ.length, comp.length); let ahorro = 0;
     for (let i = 0; i < pares; i++) { princ[i].usada = comp[i].usada = true; ahorro += Math.max(0, princ[i].p.precio + comp[i].p.precio - c.precio); }
@@ -676,7 +676,7 @@ function errorEntrega() {
   const e = datosEntrega(), a = ahoraMX();
   if (e.telefono.length !== 10) return 'Escribe tu teléfono de 10 dígitos.';
   if (e.recibe.length < 2) return 'Escribe quién recibe el pedido.';
-  if (e.direccion.length < 10) return 'Escribe tu dirección completa.';
+  if (e.direccion.length < 3) return 'Escribe tu dirección (calle, colonia y referencias; "s/n" es válido).';
   if (e.entregaModo === 'ahora') return enServicio() ? '' : 'Ahora estamos fuera de horario: programa tu entrega.';
   if (!e.entregaFecha) return 'Elige la fecha de entrega.';
   if (new Date(e.entregaFecha + 'T00:00:00Z').getUTCDay() === 0) return 'No entregamos en domingo. Elige de lunes a sábado.';
