@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <!--
 ******************************************************************************
- ARCHIVO: index.html  (FRONTEND) · VERSIÓN PARA GITHUB
+ ARCHIVO: index.html  (FRONTEND) · VERSIÓN PARA GITHUB (con chat)
  DÓNDE VA: repositorio de GitHub (bontamx/bonta.mx), archivo index.html
  TIPO: ACTUALIZACIÓN (reemplaza TODO el contenido del index.html actual)
  PASOS: GitHub > index.html > lápiz > borra todo > pega esto > Commit changes. Espera 1-2 min y Ctrl+F5.
-        Tu URL /exec ya viene puesta en WEB_APP_URL.
+        Tu URL /exec ya viene puesta en WEB_APP_URL. Solo se agregó 1 línea al final: <script src="chat.js"></script>.
+         Sube también chat.js (mismo repositorio, misma carpeta).
  ESTADO: probado con simulación de Google y de Clip; NO probado por ti contra Clip ni WhatsApp reales.
 ******************************************************************************
 -->
@@ -905,5 +906,6 @@ function guardarCliente() { store.set('bonta_cliente_v1', { nombre: $('#nombre')
   cargar().then(revisarRegresoPago);
 })();
 </script>
+<script src="chat.js"></script>
 </body>
 </html>
