@@ -15,7 +15,7 @@
 */
 (function () {
   'use strict';
-  var URL_API = (typeof WEB_APP_URL !== 'undefined' && WEB_APP_URL) ? WEB_APP_URL : '';
+  var URL_API = (typeof WEB_APP_URL !== 'undefined' && WEB_APP_URL) ? WEB_APP_URL : 'https://script.google.com/macros/s/AKfycbxcJETuRZHIAhREQJydJme91wZJIC14bJsrMe4ObkzVSZSJLNFWD8oJD81WZutae_G-/exec';
   if (!URL_API || document.getElementById('bchat')) return;   // sin servidor: no se muestra
 
   var sesion = (function () {
