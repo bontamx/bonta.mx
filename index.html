@@ -4,12 +4,9 @@
  ARCHIVO: index.html  (FRONTEND) · VERSIÓN PARA GITHUB
  DÓNDE VA: repositorio de GitHub (bontamx/bonta.mx), archivo index.html
  TIPO: ACTUALIZACIÓN (reemplaza TODO el contenido del index.html actual)
- PASOS:
-   1. En GitHub abre index.html > lápiz (Edit) > borra todo > pega este archivo completo.
-   2. Commit changes. Espera 1-2 minutos y recarga con Ctrl+F5.
-   3. Tu URL /exec YA VIENE puesta en WEB_APP_URL (no tienes que escribirla).
-   4. En la hoja Ajustes agrega: SITIO_URL = https://bontamx.github.io/bonta.mx/
- ESTADO: probado con simulación de Google y de Clip; NO probado contra Clip real.
+ PASOS: GitHub > index.html > lápiz > borra todo > pega esto > Commit changes. Espera 1-2 min y Ctrl+F5.
+        Tu URL /exec ya viene puesta en WEB_APP_URL.
+ ESTADO: probado con simulación de Google y de Clip; NO probado por ti contra Clip ni WhatsApp reales.
 ******************************************************************************
 -->
 <html lang="es-MX">
@@ -163,6 +160,20 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
 .form{display:grid;gap:12px;margin-top:18px}
 .form label[hidden]{display:none}
 .form label{display:grid;gap:4px;font-size:.85rem;font-weight:700;color:var(--olive-dark)}
+.form textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:1rem;color:var(--ink);resize:vertical}
+.form-sub{display:grid;gap:12px;padding-top:6px}
+.form-sub[hidden]{display:none}
+.form-sub h5{margin:6px 0 0;font-family:var(--serif);font-size:1.05rem;color:var(--olive-dark)}
+.horario{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;display:grid;gap:8px;margin:0}
+.horario legend{font-size:.85rem;font-weight:700;color:var(--olive-dark);padding:0 6px}
+.horario small{color:var(--muted)}
+.form label.radio{display:flex;gap:8px;align-items:center;font-weight:400}
+.form .radio input{width:auto}
+#progWrap{display:flex;gap:8px}#progWrap[hidden]{display:none}#progWrap input,#progWrap select{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--line);font:inherit}
+.hint{font-size:.85rem;color:var(--muted);margin:8px 0 0}.hint[hidden]{display:none}
+.duda{display:block;text-align:center;font-size:.85rem;margin-top:10px;color:var(--olive-dark)}
+.extra{background:var(--olive-soft);border-radius:12px;padding:12px 14px;text-align:left;font-size:.95rem;margin:8px 0}.extra[hidden]{display:none}
+.extra b{color:var(--olive-dark)}
 .form input{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:1rem;color:var(--ink);transition:border-color .2s,box-shadow .2s}
 .form input:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 3px color-mix(in srgb,var(--olive) 18%,transparent)}
 .form input.bad{border-color:var(--danger)}
@@ -343,9 +354,22 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
       <div class="form">
         <label>Tu nombre<input id="nombre" type="text" autocomplete="name" maxlength="80" placeholder="Nombre y apellido"></label>
         <label>Código postal<input id="cp" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Ej. 04000"></label>
-        <label id="telWrap">Teléfono (para coordinar la entrega)<input id="tel" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" placeholder="10 dígitos"></label>
+        <div id="entregaWrap" class="form-sub" hidden>
+          <h5>Datos de entrega</h5>
+          <label>Teléfono<input id="tel" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14" placeholder="10 dígitos"></label>
+          <label>Quién recibe<input id="recibe" type="text" maxlength="80" placeholder="Nombre de quien recibe"></label>
+          <label>Dirección completa<textarea id="dir" rows="2" maxlength="200" placeholder="Calle, número, colonia, alcaldía y referencias"></textarea></label>
+          <fieldset class="horario">
+            <legend>Horario de entrega</legend>
+            <label class="radio"><input type="radio" name="modo" value="ahora" id="modoAhora" checked> Lo antes posible</label>
+            <label class="radio"><input type="radio" name="modo" value="programada" id="modoProg"> Programar entrega</label>
+            <div id="progWrap" hidden><input id="fecha" type="date"><select id="hora" aria-label="Hora de entrega"></select></div>
+            <small>Servicio de lunes a sábado, de 10:00 a 22:00 h.</small>
+          </fieldset>
+        </div>
       </div>
       <div class="ship idle" id="ship" aria-live="polite"></div>
+      <p class="hint" id="entregaMsg" hidden></p>
     </div>
     <div class="drawer-foot">
       <div class="sum">
@@ -358,6 +382,8 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
         <svg class="wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.3.5-.4.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l2 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4Z"/></svg>
         <span id="finishTxt">Finalizar pedido</span>
       </button>
+      <button class="btn ghost" type="button" id="finishT" hidden disabled>Pagar con transferencia</button>
+      <a class="duda" id="waDuda" href="#" target="_blank" rel="noopener">¿Dudas o descuento especial? Escríbenos por WhatsApp</a>
     </div>
   </aside>
 </div>
@@ -368,6 +394,7 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
     <div class="seal" aria-hidden="true">✓</div>
     <h2 id="dTitulo">¡Pedido registrado!</h2>
     <p id="dTexto">Ya guardamos tu pedido. Para confirmarlo, envía el mensaje por WhatsApp; ahí coordinamos pago y entrega.</p>
+    <div id="dExtra" class="extra" hidden></div>
     <a class="btn" id="dLink" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
     <button class="btn ghost" type="button" id="dCerrar">Volver al menú</button>
   </div>
@@ -379,7 +406,7 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
 /* ============================================================
    BONTA · Frontend (SPA). Todo se actualiza sin recargar la página.
    ============================================================ */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcJETuRZHIAhREQJydJme91wZJIC14bJsrMe4ObkzVSZSJLNFWD8oJD81WZutae_G-/exec';   // SOLO si alojas este HTML fuera de Apps Script: pega aquí la URL /exec de tu Web App.
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwYUN4IsBVwVwVIxTQ73trj8G-a1-XHFSufeJu6FT8znLPTze5UfFNINUiDl2WHCL8/exec';   // SOLO si alojas este HTML fuera de Apps Script: pega aquí la URL /exec de tu Web App.
 const MSG_SIN_COBERTURA = 'Tu zona requiere cotización especial. Finaliza tu pedido y coordinamos el envío por WhatsApp';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -402,11 +429,11 @@ const DEMO = {
   combos: [{ nombre: 'Pansotti + salsa', principal: 'pansotti de hongos', categoria: 'Salsas', precio: 279 }],
   nosotros: { titulo: 'Quiénes somos', historia: 'Esta es la historia de ejemplo de tu empresa. En tu hoja "Nosotros" escribirás la verdadera.\n\nCuenta cómo empezó, qué te inspira y cómo preparas cada pieza a mano.', fotos: [] },
   legales: [{ titulo: 'Aviso de privacidad', texto: 'Texto de ejemplo. Aquí aparecerá tu aviso de privacidad real, escrito en la hoja "Legales".' }, { titulo: 'Aviso legal y uso del sitio web', texto: 'Texto de ejemplo del aviso legal.' }],
-  ajustes: { marca: 'https://drive.google.com/file/d/1C9IOJtGkKSNxB--bRBb3V7MtSV8WF93r/view?usp=drive_link', marcaOpacidad: 0.07, subsidio: 30, pagoEnLinea: true, whatsapp: '5215500000000', negocio: 'Bonta', slogan: 'Pasta artesanal congelada y lasañas, listas para tu mesa', aviso: 'MODO DE PRUEBA: estos productos son de ejemplo y no se guardan pedidos. Los cambios de diseño sí son reales.' }
+  ajustes: { marca: 'https://drive.google.com/file/d/1C9IOJtGkKSNxB--bRBb3V7MtSV8WF93r/view?usp=drive_link', marcaOpacidad: 0.07, subsidio: 30, pagoEnLinea: true, transferencia: true, whatsapp: '5215500000000', negocio: 'Bonta', slogan: 'Pasta artesanal congelada y lasañas, listas para tu mesa', aviso: 'MODO DE PRUEBA: estos productos son de ejemplo y no se guardan pedidos. Los cambios de diseño sí son reales.' }
 };
 function modoPrueba(fn) {
   if (fn === 'getAppData') return Promise.resolve(JSON.parse(JSON.stringify(DEMO)));
-  if (fn === 'verificarPago') return Promise.resolve({ ok: true, estatus: 'Pagado' });
+  if (fn === 'verificarPago') return Promise.resolve({ ok: true, estatus: 'Pagado', waUrl: 'https://wa.me/5215500000000?text=demo' });
   return Promise.resolve({ ok: false, error: 'Modo de prueba: aquí no se guardan pedidos.' });
 }
 
@@ -423,6 +450,7 @@ const api = {
     if (!WEB_APP_URL) return modoPrueba(fn);
     if (fn === 'getAppData') return fetch(WEB_APP_URL + '?action=data').then(r => r.json());
     const POST = { crearPedido: ['pedido', 'pedido'], enviarContacto: ['contacto', 'contacto'], verificarPago: ['verificar', 'folio'] };
+    if (fn === 'verificarPago') return fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'verificar', folio: args[0], token: args[1] }) }).then(r => r.json());
     if (POST[fn]) {
       // text/plain evita el preflight CORS que Apps Script no responde
       return fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: POST[fn][0], [POST[fn][1]]: args[0] }) }).then(r => r.json());
@@ -474,7 +502,9 @@ function calcularCombos(ls, combos) {
   let total = 0; const aplicados = [];
   (combos || []).forEach(c => {
     const k = norm(c.principal);
-    const princ = un.filter(u => !u.usada && k && (norm(u.p.id) === k || norm(u.p.nombre).includes(k)));
+    const pal = k.split('_').filter(w => w.length > 2 && !['con', 'los', 'las', 'del'].includes(w));
+    const coincide = p => norm(p.id) === k || (pal.length > 0 && pal.every(w => norm(p.nombre).includes(w)));
+    const princ = un.filter(u => !u.usada && k && coincide(u.p));
     const comp = un.filter(u => !u.usada && !princ.includes(u) && catKey(u.p.categoria) === catKey(c.categoria)).sort((a, b) => b.p.precio - a.p.precio);
     const pares = Math.min(princ.length, comp.length); let ahorro = 0;
     for (let i = 0; i < pares; i++) { princ[i].usada = comp[i].usada = true; ahorro += Math.max(0, princ[i].p.precio + comp[i].p.precio - c.precio); }
@@ -623,6 +653,37 @@ function renderCart() {
     </div>`).join('') : '<div class="empty-cart"><div class="big">B</div><p>Tu carrito está vacío.<br>Agrega algo rico del menú.</p></div>';
   renderResumen();
 }
+/* ---------- Horario de entrega (hora de Ciudad de México; el servidor lo vuelve a validar) ---------- */
+function ahoraMX() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Mexico_City', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date()).map(x => [x.type, x.value]));
+  const h = p.hour === '24' ? 0 : +p.hour;
+  const ymd = `${p.year}-${p.month}-${p.day}`;
+  const dow = new Date(Date.UTC(+p.year, +p.month - 1, +p.day)).getUTCDay();
+  return { ymd, min: h * 60 + +p.minute, dow };
+}
+const enServicio = () => { const a = ahoraMX(); return a.dow !== 0 && a.min >= 600 && a.min < 1320; };
+function llenarHoras() {
+  const sel = $('#hora'); if (sel.options.length) return;
+  for (let m = 600; m <= 1320; m += 30) { const t = String(Math.floor(m / 60)).padStart(2, '0') + ':' + (m % 60 ? '30' : '00'); sel.add(new Option(t + ' h', t)); }
+}
+function datosEntrega() {
+  const prog = $('#modoProg').checked;
+  return { recibe: $('#recibe').value.trim(), direccion: $('#dir').value.trim(), telefono: $('#tel').value.replace(/\D/g, ''),
+    entregaModo: prog ? 'programada' : 'ahora', entregaFecha: prog ? $('#fecha').value : '', entregaHora: prog ? $('#hora').value : '' };
+}
+// Devuelve el primer problema (texto) o '' si todo está bien.
+function errorEntrega() {
+  const e = datosEntrega(), a = ahoraMX();
+  if (e.telefono.length !== 10) return 'Escribe tu teléfono de 10 dígitos.';
+  if (e.recibe.length < 2) return 'Escribe quién recibe el pedido.';
+  if (e.direccion.length < 10) return 'Escribe tu dirección completa.';
+  if (e.entregaModo === 'ahora') return enServicio() ? '' : 'Ahora estamos fuera de horario: programa tu entrega.';
+  if (!e.entregaFecha) return 'Elige la fecha de entrega.';
+  if (new Date(e.entregaFecha + 'T00:00:00Z').getUTCDay() === 0) return 'No entregamos en domingo. Elige de lunes a sábado.';
+  if (e.entregaFecha < a.ymd || (e.entregaFecha === a.ymd && +e.entregaHora.slice(0, 2) * 60 + +e.entregaHora.slice(3) <= a.min)) return 'Esa hora ya pasó. Elige otra.';
+  return '';
+}
+
 function pagoActivo(env) { return !!(state.data && state.data.ajustes && state.data.ajustes.pagoEnLinea) && env.estado === 'ok'; }
 function renderResumen() {
   const t = totales();
@@ -649,27 +710,40 @@ function renderResumen() {
   }
   $('#sEnvio').textContent = envioTxt;
   $('#sTotal').textContent = money(total) + (env.estado === 'sin_cobertura' ? ' + envío' : '');
+  const conEntrega = env.estado === 'ok';
   const paga = pagoActivo(env);
-  $('#telWrap').hidden = !paga;
-  const tel = $('#tel').value.replace(/\D/g, '');
-  const valido = t.ls.length && $('#nombre').value.trim().length >= 2 && cp.length === 5 && (!paga || tel.length === 10) && !state.enviando;
-  $('#finish').disabled = !valido;
+  const a = (state.data && state.data.ajustes) || {};
+  $('#entregaWrap').hidden = !conEntrega;
+  if (conEntrega) {
+    llenarHoras();
+    const abierto = enServicio();
+    $('#modoAhora').disabled = !abierto;
+    if (!abierto && $('#modoAhora').checked) $('#modoProg').checked = true;
+    $('#progWrap').hidden = !$('#modoProg').checked;
+    $('#fecha').min = ahoraMX().ymd;
+  }
+  const errE = conEntrega ? errorEntrega() : '';
+  $('#entregaMsg').hidden = !errE; $('#entregaMsg').textContent = errE;
+  const base = t.ls.length && $('#nombre').value.trim().length >= 2 && cp.length === 5 && !errE && !state.enviando;
+  $('#finish').disabled = !base;
+  $('#finishT').hidden = !(conEntrega && a.transferencia); $('#finishT').disabled = !base;
   $('#finish .wa').style.display = paga ? 'none' : '';
   if (!state.enviando) $('#finishTxt').textContent = paga ? 'Pagar con tarjeta ' + money(total) : 'Finalizar pedido por WhatsApp';
-  return { t, env, total, paga };
+  $('#waDuda').href = 'https://wa.me/' + (a.whatsapp || '') + '?text=' + encodeURIComponent('Hola Bonta, tengo una duda sobre mi pedido / quisiera consultar un descuento especial.');
+  return { t, env, total, paga, conEntrega };
 }
 
 /* ---------- Finalizar pedido ---------- */
-async function finalizar() {
+async function finalizar(metodo = 'tarjeta') {
   if (state.enviando) return;
-  const { t, total, paga } = renderResumen();
+  const { t, total, paga, conEntrega } = renderResumen();
   if ($('#finish').disabled) return;
-  state.enviando = true; $('#finish').disabled = true; $('#finishTxt').textContent = paga ? 'Abriendo el pago seguro…' : 'Guardando tu pedido…';
+  state.enviando = true; $('#finish').disabled = true; $('#finishT').disabled = true; $('#finishTxt').textContent = (paga && metodo === 'tarjeta') ? 'Abriendo el pago seguro…' : 'Guardando tu pedido…';
   $('#alerta').innerHTML = '';
   let redirigiendo = false;
   try {
     const r = await api.call('crearPedido', {
-      nombre: $('#nombre').value.trim(), cp: $('#cp').value.replace(/\D/g, ''), telefono: $('#tel').value.replace(/\D/g, ''),
+      nombre: $('#nombre').value.trim(), cp: $('#cp').value.replace(/\D/g, ''), metodo, ...(conEntrega ? datosEntrega() : {}),
       items: t.ls.map(l => ({ id: l.p.id, cant: l.q })), totalEsperado: total,
       retorno: location.protocol === 'https:' ? location.origin + location.pathname : ''
     });
@@ -686,6 +760,13 @@ async function finalizar() {
       store.set('bonta_pago_v1', { folio: r.folio });
       redirigiendo = true;
       location.href = r.pagoUrl;
+      return;
+    }
+    if (r.transferencia) {
+      state.cart = {}; guardarCarrito(); renderCart(); cerrarCapa($('#cartLayer'));
+      const tr = r.transferencia;
+      mostrarListo({ titulo: 'Paga por transferencia', texto: 'Haz tu transferencia y, para confirmar tu pedido, envíanos el comprobante por WhatsApp con el botón de abajo.', link: r.waUrl, linkTxt: 'Enviar comprobante por WhatsApp',
+        html: `<p>Banco: <b>${esc(tr.banco || '—')}</b></p><p>Titular: <b>${esc(tr.titular || '—')}</b></p><p>CLABE: <b>${esc(tr.clabe)}</b></p><p>Concepto: <b>${esc(tr.concepto)}</b></p><p>Monto: <b>${money(r.total)}</b></p>` });
       return;
     }
     state.cart = {}; guardarCarrito(); renderCart();
@@ -707,24 +788,31 @@ async function revisarRegresoPago() {
   try { history.replaceState(null, '', location.pathname); } catch (e) { /* sin historial */ }
   if (q.get('pago') === 'error') { mostrarListo({ titulo: 'El pago no se completó', texto: 'No se hizo ningún cargo. Tu carrito sigue guardado: puedes intentarlo de nuevo.', cerrar: true }); return; }
   mostrarListo({ titulo: 'Confirmando tu pago…', texto: 'Un momento, estamos verificando con el banco.', cerrar: true });
-  let estatus = '';
+  let estatus = '', r = null;
+  const token = q.get('t') || '';
   for (let i = 0; i < 4; i++) {
-    try { const r = await api.call('verificarPago', folio); estatus = r && r.ok ? r.estatus : ''; } catch (e) { estatus = ''; }
+    try { r = await api.call('verificarPago', folio, token); estatus = r && r.ok ? r.estatus : ''; } catch (e) { estatus = ''; }
     if (estatus === 'Pagado') break;
     await new Promise(ok => setTimeout(ok, 4000));
   }
   if (estatus === 'Pagado') {
     state.cart = {}; guardarCarrito(); renderCart(); store.set('bonta_pago_v1', null);
-    mostrarListo({ titulo: '¡Pago recibido! 🎉', texto: `Tu pedido ${folio} está confirmado. Te contactaremos por teléfono para coordinar la entrega.`, cerrar: true });
+    if (r && r.waUrl) {
+      mostrarListo({ titulo: '¡Pago recibido! 🎉', texto: `Último paso: toca el botón para enviarnos por WhatsApp la confirmación de tu pedido ${folio} con los datos de entrega. Así lo programamos.`, link: r.waUrl, linkTxt: 'Enviar confirmación por WhatsApp' });
+      try { window.open(r.waUrl, '_blank', 'noopener'); } catch (e) { /* el botón sirve de respaldo */ }
+    } else {
+      mostrarListo({ titulo: '¡Pago recibido! 🎉', texto: `Tu pedido ${folio} está confirmado. Te contactaremos por teléfono para coordinar la entrega.` });
+    }
   } else {
     mostrarListo({ titulo: 'Aún no vemos tu pago', texto: `Si ya pagaste, tu pedido ${folio} se confirmará en unos minutos y te contactaremos. Guarda este folio por cualquier duda.`, cerrar: true });
   }
 }
 
 /* ---------- Confirmación reutilizable (pedido / mensaje de contacto) ---------- */
-function mostrarListo({ titulo, texto, link }) {
+function mostrarListo({ titulo, texto, link, linkTxt, html }) {
   $('#dTitulo').textContent = titulo; $('#dTexto').textContent = texto;
-  $('#dLink').hidden = !link; if (link) $('#dLink').href = link;
+  $('#dLink').hidden = !link; if (link) { $('#dLink').href = link; $('#dLink').textContent = linkTxt || 'Abrir WhatsApp'; }
+  $('#dExtra').hidden = !html; $('#dExtra').innerHTML = html || '';
   abrirCapa($('#doneLayer'));
 }
 
@@ -797,7 +885,9 @@ $('#cartBtn').onclick = () => abrirCapa($('#cartLayer'));
 $('#mMenos').onclick = () => { state.modalQty = Math.max(1, state.modalQty - 1); actualizarModalQty(); };
 $('#mMas').onclick = () => { state.modalQty = Math.min(99, state.modalQty + 1); actualizarModalQty(); };
 $('#mAdd').onclick = () => { const p = state.byId[state.modalId]; if (!p) return; agregar(p.id, state.modalQty); cerrarCapa($('#modal')); toast(`Agregado: ${state.modalQty} × ${p.nombre}`); };
-$('#finish').onclick = finalizar;
+$('#finish').onclick = () => finalizar('tarjeta');
+$('#finishT').onclick = () => finalizar('transferencia');
+['#recibe', '#dir', '#fecha', '#hora', '#modoAhora', '#modoProg'].forEach(id => $(id).addEventListener('input', renderResumen));
 $('#btnNosotros').onclick = abrirNosotros;
 $('#btnContacto').onclick = abrirContacto;
 $('#btnLegales').onclick = abrirLegales;
