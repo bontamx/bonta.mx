@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <!--
 ******************************************************************************
- ARCHIVO: index.html  (FRONTEND) · VERSIÓN PARA GITHUB (con chat)
- DÓNDE VA: repositorio de GitHub (bontamx/bonta.mx), archivo index.html
+ ARCHIVO: index.html  (FRONTEND · Etapa C1) · VERSIÓN PARA GITHUB (con chat)
+ DÓNDE VA: GitHub, repositorio bontamx/bonta.mx, archivo index.html
  TIPO: ACTUALIZACIÓN (reemplaza TODO el contenido del index.html actual)
- PASOS: GitHub > index.html > lápiz > borra todo > pega esto > Commit changes. Espera 1-2 min y Ctrl+F5.
-        Tu URL /exec ya viene puesta en WEB_APP_URL. Solo se agregó 1 línea al final: <script src="chat.js"></script>.
-         Sube también chat.js (mismo repositorio, misma carpeta).
- ESTADO: probado con simulación de Google y de Clip; NO probado por ti contra Clip ni WhatsApp reales.
+ CAMBIO: muestra "Agotado" y limita cantidades cuando el servidor manda existencias.
+         Si el control está apagado, funciona como antes. chat.js no cambia.
+ PASOS: GitHub > index.html > lápiz > Ctrl+A > pega esto > Commit changes.
+        Espera 1-2 min y recarga con Ctrl+F5.
+ ESTADO: probado en un navegador con datos simulados; NO con tu servidor real.
 ******************************************************************************
 -->
 <html lang="es-MX">
@@ -101,6 +102,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;margin:0;color
 .weight{margin-left:auto;font-size:.82rem;color:var(--muted)}
 .card-add{position:absolute;right:14px;bottom:14px;width:42px;height:42px;border-radius:50%;border:0;background:var(--olive);color:var(--cream);font-size:1.5rem;line-height:1;display:grid;place-items:center;box-shadow:var(--shadow);transition:background .2s,transform .2s}
 .card-add:hover{background:var(--olive-dark);transform:scale(1.08)}
+.card-add:disabled,#mAdd:disabled{opacity:.4;cursor:default;transform:none;pointer-events:none}
+.card.agotado .media{filter:grayscale(.85);opacity:.7}
+.tag.fuera{background:#6b675a}
 
 .state{grid-column:1/-1;text-align:center;padding:40px 16px;color:var(--muted)}
 .state button{margin-top:12px}
@@ -530,8 +534,11 @@ function aplicarDatos(d) {
   state.data = d;
   state.byId = {};
   d.productos.forEach(p => { state.byId[p.id] = p; });
-  // Quita del carrito lo que ya no existe
-  for (const id of Object.keys(state.cart)) if (!state.byId[id]) delete state.cart[id];
+  // Quita del carrito lo que ya no existe y ajusta lo que supera la existencia
+  for (const id of Object.keys(state.cart)) {
+    if (!state.byId[id] || tope(id) === 0) delete state.cart[id];
+    else state.cart[id] = Math.min(state.cart[id], tope(id));
+  }
   const a = d.ajustes || {};
   const logo = imgUrl(a.marca), op = Math.min(0.3, Math.max(0.02, Number(a.marcaOpacidad) || 0.07));
   const raiz = document.documentElement.style;
@@ -546,6 +553,13 @@ function aplicarDatos(d) {
 }
 
 /* ---------- Menú ---------- */
+/* Existencias: el servidor manda maximo/agotado solo si el control está activado */
+function tope(id) {
+  const p = state.byId[id];
+  if (p && p.agotado) return 0;
+  return p && typeof p.maximo === 'number' ? Math.min(99, Math.max(0, p.maximo)) : 99;
+}
+function libres(id) { return Math.max(0, tope(id) - (state.cart[id] || 0)); }
 function categorias() { return ['Todas', ...new Set(state.data.productos.map(p => p.categoria))]; }
 function renderChips() {
   const cats = categorias();
@@ -556,9 +570,9 @@ function renderGrid() {
   const lista = state.data.productos.filter(p => state.filtro === 'Todas' || p.categoria === state.filtro);
   if (!lista.length) { $('#grid').innerHTML = '<div class="state">Pronto tendremos nuevos platillos. ¡Vuelve en un rato!</div>'; return; }
   $('#grid').innerHTML = lista.map((p, i) => `
-    <article class="card" style="animation-delay:${Math.min(i, 8) * 50}ms">
+    <article class="card${p.agotado ? ' agotado' : ''}" style="animation-delay:${Math.min(i, 8) * 50}ms">
       <button class="card-open" type="button" data-open="${esc(p.id)}" aria-label="Ver ${esc(p.nombre)}">
-        <div class="media">${mediaHTML(p, p.enPromo ? '<span class="tag">Promoción</span>' : '')}</div>
+        <div class="media">${mediaHTML(p, p.agotado ? '<span class="tag fuera">Agotado</span>' : (p.enPromo ? '<span class="tag">Promoción</span>' : ''))}</div>
         <div class="card-body">
           <span class="cat">${esc(p.categoria)}</span>
           <h3>${esc(p.nombre)}</h3>
@@ -566,7 +580,7 @@ function renderGrid() {
           <div class="price-row"><span class="price">${money(p.precio)}</span>${p.enPromo ? `<span class="was">${money(p.precioRegular)}</span>` : ''}</div>
         </div>
       </button>
-      <button class="card-add" type="button" data-add="${esc(p.id)}" aria-label="Agregar ${esc(p.nombre)} al carrito">+</button>
+      <button class="card-add" type="button" data-add="${esc(p.id)}" ${p.agotado ? 'disabled' : ''} aria-label="${p.agotado ? 'Agotado: ' : 'Agregar al carrito: '}${esc(p.nombre)}">+</button>
     </article>`).join('');
 }
 
@@ -599,7 +613,7 @@ document.addEventListener('keydown', e => {
 function abrirDetalle(id) {
   const p = state.byId[id]; if (!p) return;
   state.modalId = id; state.modalQty = 1;
-  $('#mMedia').innerHTML = mediaHTML(p, p.enPromo ? '<span class="tag">Promoción</span>' : '');
+  $('#mMedia').innerHTML = mediaHTML(p, p.agotado ? '<span class="tag fuera">Agotado</span>' : (p.enPromo ? '<span class="tag">Promoción</span>' : ''));
   $('#mCat').textContent = p.categoria;
   $('#mTitulo').textContent = p.nombre;
   $('#mDesc').textContent = p.descripcion || '';
@@ -609,9 +623,12 @@ function abrirDetalle(id) {
   abrirCapa($('#modal'));
 }
 function actualizarModalQty() {
-  $('#mCant').textContent = state.modalQty;
   const p = state.byId[state.modalId];
-  $('#mAdd').textContent = p ? `Agregar al carrito · ${money(p.precio * state.modalQty)}` : 'Agregar al carrito';
+  const quedan = p ? libres(p.id) : 99;
+  state.modalQty = Math.max(1, Math.min(state.modalQty, quedan || 1));
+  $('#mCant').textContent = state.modalQty;
+  $('#mAdd').disabled = !!p && quedan === 0;
+  $('#mAdd').textContent = !p ? 'Agregar al carrito' : quedan === 0 ? (p.agotado ? 'Agotado' : 'Ya tienes todas las disponibles') : `Agregar al carrito · ${money(p.precio * state.modalQty)}`;
 }
 
 /* ---------- Carrito ---------- */
@@ -625,13 +642,16 @@ function totales() {
   return { ls, pastas, subsidio, combo, subtotal, cantidad: ls.reduce((s, l) => s + l.q, 0) };
 }
 function agregar(id, n = 1) {
-  if (!state.byId[id]) return;
+  if (!state.byId[id]) return false;
+  if (libres(id) < n) { toast(tope(id) ? `Solo hay ${tope(id)} disponibles` : 'Producto agotado'); return false; }
   state.cart[id] = Math.min(99, (state.cart[id] || 0) + n);
   renderCart(); guardarCarrito();
   const b = $('#badge'); b.classList.add('bump'); setTimeout(() => b.classList.remove('bump'), 250);
+  return true;
 }
 function cambiarCant(id, delta) {
   const q = (state.cart[id] || 0) + delta;
+  if (delta > 0 && q > tope(id)) { toast(`Solo hay ${tope(id)} disponibles`); return; }
   if (q <= 0) delete state.cart[id]; else state.cart[id] = Math.min(99, q);
   renderCart(); guardarCarrito();
 }
@@ -874,7 +894,7 @@ document.addEventListener('click', e => {
   if (t.hasAttribute('data-legales')) abrirLegales();
   else if (t.dataset.tipo) elegirTipo(t.dataset.tipo);
   else if (t.dataset.open) abrirDetalle(t.dataset.open);
-  else if (t.dataset.add) { agregar(t.dataset.add); toast('Agregado: ' + state.byId[t.dataset.add].nombre); }
+  else if (t.dataset.add) { if (agregar(t.dataset.add)) toast('Agregado: ' + state.byId[t.dataset.add].nombre); }
   else if (t.dataset.cat) { state.filtro = t.dataset.cat; renderChips(); renderGrid(); }
   else if (t.dataset.menos) cambiarCant(t.dataset.menos, -1);
   else if (t.dataset.mas) cambiarCant(t.dataset.mas, 1);
@@ -885,7 +905,7 @@ document.addEventListener('click', e => {
 $('#cartBtn').onclick = () => abrirCapa($('#cartLayer'));
 $('#mMenos').onclick = () => { state.modalQty = Math.max(1, state.modalQty - 1); actualizarModalQty(); };
 $('#mMas').onclick = () => { state.modalQty = Math.min(99, state.modalQty + 1); actualizarModalQty(); };
-$('#mAdd').onclick = () => { const p = state.byId[state.modalId]; if (!p) return; agregar(p.id, state.modalQty); cerrarCapa($('#modal')); toast(`Agregado: ${state.modalQty} × ${p.nombre}`); };
+$('#mAdd').onclick = () => { const p = state.byId[state.modalId]; if (!p) return; const ok = agregar(p.id, state.modalQty); cerrarCapa($('#modal')); if (ok) toast(`Agregado: ${state.modalQty} × ${p.nombre}`); };
 $('#finish').onclick = () => finalizar('tarjeta');
 $('#finishT').onclick = () => finalizar('transferencia');
 ['#recibe', '#dir', '#fecha', '#hora', '#modoAhora', '#modoProg'].forEach(id => $(id).addEventListener('input', renderResumen));
