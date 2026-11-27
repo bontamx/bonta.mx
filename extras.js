@@ -2,7 +2,7 @@
 ******************************************************************************
  ARCHIVO: extras.js  (FRONTEND · rediseño inspirado en la página del socio)
  DÓNDE VA: GitHub, repositorio bontamx/bonta.mx
- ARCHIVOS A SUBIR (todos a la misma carpeta que index.html): extras.js, manifest.webmanifest,
+ ARCHIVOS A SUBIR (todos a la misma carpeta que index.html): extras.js, fede.jpg, manifest.webmanifest,
    favicon-32.png, icon-192.png, icon-512.png, icon-maskable-512.png, apple-touch-icon.png
  TIPO: ACTUALIZACIÓN. Reemplaza el extras.js que ya subiste. index.html NO se toca otra vez
        (si ya le pusiste la línea <script src="extras.js"></script>, no hagas nada más).
@@ -116,7 +116,7 @@
   if (inf) inf.style.display = 'none';
   if (HERO_FOTO && typeof imgUrl === 'function') {
     var cta = document.querySelector('.hero .cta');
-    if (cta) cta.insertAdjacentHTML('afterend', '<div class="x-heroimg"><img src="' + esc(imgUrl(HERO_FOTO)) + '" alt="Pasta rellena artesanal Bonta" loading="eager"></div>');
+    if (cta) cta.insertAdjacentHTML('afterend', '<div class="x-heroimg"><img src="' + esc(/^https?:/i.test(HERO_FOTO) ? imgUrl(HERO_FOTO) : HERO_FOTO) + '" alt="Pasta rellena artesanal Bonta" loading="eager"></div>');
   }
 
   /* ---------- Secciones nuevas ---------- */
@@ -190,7 +190,7 @@
   }
 
   /* ---------- Datos que dependen de tu hoja ---------- */
-  var FEDE_FOTO = '';   // pega aquí la liga de la foto de Fede (Drive o ruta, como imagenes/fede.webp); vacío = sin foto
+  var FEDE_FOTO = 'fede.jpg';   // pega aquí la liga de la foto de Fede (Drive o ruta, como imagenes/fede.webp); vacío = sin foto
   var FEDE_TXT = ['Fede creció en un barrio donde casi el 70% de los vecinos eran italianos. A los 9 o 10 años empezó a cocinar pasta en casa, y a los 11 le regalaron un recetario de pastas y pizzas caseras: la cocina se volvió su lugar feliz.', 'Treinta años después sigue perfeccionando su técnica, pieza por pieza. La pasta de BONTA es italiana de corazón, con un toque mexicano propio.'];
   function pintar() {
     var d = state.data; if (!d) return;
@@ -208,7 +208,7 @@
     }
     var hh = document.getElementById('xHist');   // Sección de Fede (siempre). La historia de tu hoja Nosotros se ve en el botón "Quiénes somos".
     if (hh) {
-      var f = FEDE_FOTO ? imgUrl(FEDE_FOTO) : '';
+      var f = FEDE_FOTO ? (/^https?:/i.test(FEDE_FOTO) ? imgUrl(FEDE_FOTO) : FEDE_FOTO) : '';
       document.getElementById('xHTitulo').textContent = 'Fede, el chef detrás de cada receta';
       hh.className = 'x-historia' + (f ? ' con-foto' : '');
       hh.innerHTML = (f ? '<img src="' + esc(f) + '" alt="Fede, chef de Bonta" loading="lazy" referrerpolicy="no-referrer">' : '') +
