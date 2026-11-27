@@ -2,7 +2,8 @@
 ******************************************************************************
  ARCHIVO: extras.js  (FRONTEND · rediseño inspirado en la página del socio)
  DÓNDE VA: GitHub, repositorio bontamx/bonta.mx
- TIPO: ARCHIVO NUEVO (se sube al lado de index.html). No reemplaza nada.
+ TIPO: ACTUALIZACIÓN. Reemplaza el extras.js que ya subiste. index.html NO se toca otra vez
+       (si ya le pusiste la línea <script src="extras.js"></script>, no hagas nada más).
  PASOS:
   1. GitHub > Add file > Upload files > sube extras.js > Commit changes.
   2. GitHub > index.html > lápiz. Baja hasta las últimas líneas, donde dice
@@ -42,6 +43,11 @@
     /* Paleta del logo: #FFF1C0 #EFC86D #D4A43C #7F5C0E #2A1E16 #5A4A3C (edítala aquí) */
     ':root{--cream:color-mix(in srgb,#FFF1C0 40%,#fff);--paper:#fffdf6;--kraft:#EFC86D;--kraft-soft:#FFF1C0;--olive:#7F5C0E;--olive-dark:#2A1E16;--olive-soft:#FFF1C0;--gold:#D4A43C;--gold-text:#7F5C0E;--ink:#2A1E16;--muted:#5A4A3C;--line:#EBD9A6}',
     '.badge,.tag{color:#2A1E16}',
+    '.top{flex-wrap:wrap;gap:8px}',
+    '.x-nav{order:3;flex:1 0 100%;display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}',
+    '.x-nav::-webkit-scrollbar{display:none}.x-nav .chip{padding:6px 13px;font-size:.85rem;white-space:nowrap}',
+    '@media(min-width:1100px){.x-nav{order:0;flex:1 1 auto;justify-content:center;flex-wrap:wrap;overflow:visible}}',
+    '.x-historia blockquote{font:italic 500 1.15rem var(--serif);color:var(--olive);margin:14px 0 0}',
     '.x-sec{max-width:1100px;margin:0 auto;padding:36px 20px}',
     '.x-sec h2{font-size:clamp(1.5rem,4.6vw,2.1rem);text-align:center}',
     '.x-sub{text-align:center;color:var(--muted);max-width:56ch;margin:8px auto 22px}',
@@ -74,13 +80,13 @@
   ].join('');
   document.head.appendChild(css);
 
-  /* ---------- Hero: gancho, sin el botón de comentarios ---------- */
+  /* ---------- Hero ---------- */
   var h1 = document.querySelector('.hero h1');
-  if (h1) h1.textContent = 'Pasta rellena artesanal, lista en 5 minutos o menos';
+  if (h1) h1.textContent = 'Pasta rellena artesanal, del congelador a tu mesa en 5 minutos';
   var eb = document.querySelector('.hero .eyebrow');
-  if (eb) eb.textContent = 'Hecha a mano en Coyoacán';
-  var bc = document.getElementById('btnContacto');
-  if (bc) bc.style.display = 'none';
+  if (eb) eb.textContent = 'Hecho a mano. Hecho con amor.';
+  var inf = document.querySelector('.hero .info');
+  if (inf) inf.style.display = 'none';
   if (HERO_FOTO && typeof imgUrl === 'function') {
     var cta = document.querySelector('.hero .cta');
     if (cta) cta.insertAdjacentHTML('afterend', '<div class="x-heroimg"><img src="' + esc(imgUrl(HERO_FOTO)) + '" alt="Pasta rellena artesanal Bonta" loading="eager"></div>');
@@ -97,7 +103,14 @@
   var menu = document.getElementById('menu');
   if (menu) menu.insertAdjacentHTML('afterend',
     '<section class="x-sec" id="promos"><h2>Promociones</h2><p class="x-sub">Para pedir más y pagar menos.</p><div class="x-promos" id="xPromos"></div></section>' +
-    '<section class="x-sec x-alt" id="cocinar"><h2>Cómo cocinarla</h2><p class="x-sub">Siete cuidados para que quede perfecta.</p><ol class="x-cocinar">' +
+    '<section class="x-sec x-alt" id="como-pedir"><h2>Cómo pedir y pagar</h2><p class="x-sub">Todo desde esta página, en cinco pasos.</p><div class="x-pasos">' +
+    '<div class="x-box"><span class="x-num">1</span><h3>Arma tu pedido</h3><p>Toca + en las pastas y salsas que quieras. Los combos y el envío gratis se calculan solos.</p></div>' +
+    '<div class="x-box"><span class="x-num">2</span><h3>Abre tu carrito</h3><p>Escribe tu nombre y tu código postal: al instante te decimos si llegamos y cuánto cuesta el envío.</p></div>' +
+    '<div class="x-box"><span class="x-num">3</span><h3>Datos de entrega</h3><p>Teléfono, quién recibe, dirección y horario: lo antes posible o programado, de lunes a sábado.</p></div>' +
+    '<div class="x-box"><span class="x-num">4</span><h3>Paga</h3><p>Con tarjeta, de forma segura con Clip, o por transferencia. Tu pedido tiene un tiempo límite para pagarse; si no, se libera.</p></div>' +
+    '<div class="x-box"><span class="x-num">5</span><h3>Confirma por WhatsApp</h3><p>Al terminar, un toque nos manda tu resumen y tus datos de entrega. Si pagas por transferencia, ahí adjuntas tu comprobante.</p></div></div>' +
+    '<p class="x-sub" style="margin-top:16px">Si tu código postal está fuera de nuestra zona, el pedido mínimo es de 2 pastas y el envío tiene un costo adicional: lo mandamos a WhatsApp para cotizarlo.</p></section>' +
+    '<section class="x-sec" id="cocinar"><h2>Cómo cocinarla</h2><p class="x-sub">Siete cuidados para que quede perfecta.</p><ol class="x-cocinar">' +
     '<li><b>Agua abundante y con suficiente sal</b><span>Usa 2 litros de agua por paquete de 450 g. La pasta solo se sazona en el agua; si le falta sal, queda desabrida.</span></li>' +
     '<li><b>No la descongeles</b><span>Va directo del congelador a la olla. Descongelada se pega y se rompe.</span></li>' +
     '<li><b>Sin aceite en el agua</b><span>El aceite flota y envuelve la pasta; después la salsa resbala en lugar de adherirse.</span></li>' +
@@ -105,36 +118,44 @@
     '<li><b>Fuego medio: agua temblando, no a borbotones</b><span>El hervor fuerte golpea las piezas y las abre.</span></li>' +
     '<li><b>No la sobrecuezas</b><span>Son 5 minutos (gnocchi, de 3 a 4). Pasarte ablanda la masa y suelta el relleno. Revisa la etiqueta de tu paquete.</span></li>' +
     '<li><b>Escurre sin sacudir</b><span>Hazlo con cuidado y sirve enseguida con tu salsa.</span></li></ol></section>' +
-    '<section class="x-sec" id="historia" hidden><h2 id="xHTitulo">Quiénes somos</h2><div class="x-historia" id="xHist"></div></section>' +
-    '<section class="x-sec x-alt" id="entregas"><h2>Entregas</h2><p class="x-sub">Todo a domicilio, bien congelado.</p><div class="x-pasos">' +
+    '<section class="x-sec x-alt" id="historia"><h2 id="xHTitulo">Quiénes somos</h2><div class="x-historia" id="xHist"></div></section>' +
+    '<section class="x-sec" id="entregas"><h2>Entregas</h2><p class="x-sub">Todo a domicilio, bien congelado.</p><div class="x-pasos">' +
     '<div class="x-box"><h3>Horario</h3><p>Servicio de lunes a sábado, de 10:00 a 22:00 h. Puedes programar tu entrega al pagar.</p></div>' +
-    '<div class="x-box"><h3>Cobertura</h3><p>Escribe tu código postal en el carrito y te decimos al instante si llegamos y cuánto cuesta el envío.</p></div>' +
-    '<div class="x-box"><h3>Envío gratis</h3><p>Al llevar 2 pastas, dentro de tu zona de entrega.</p></div></div></section>' +
-    '<section class="x-sec" id="ayuda"><h2>¿Necesitas ayuda?</h2><p class="x-sub">Pregúntale al chat o escríbenos. Aquí también recibimos tus dudas, comentarios y aplausos.</p><div class="x-chat" id="xChat"></div></section>');
+    '<div class="x-box"><h3>Cobertura</h3><p>Escribe tu código postal en el carrito y te decimos al instante si llegamos y cuánto cuesta el envío. Fuera de la zona: pedido mínimo de 2 pastas y envío con costo adicional, cotizado por WhatsApp.</p></div>' +
+    '<div class="x-box"><h3>Envío gratis</h3><p>Al llevar 2 pastas, dentro de tu zona de entrega.</p></div></div></section>');
 
-  /* ---------- Abrir el chat (si no lo encuentra, WhatsApp) ---------- */
+  /* ---------- Chat (si no encuentra tu botón, abre WhatsApp) ---------- */
   function wa(t) { var n = (state.data && state.data.ajustes && state.data.ajustes.whatsapp) || '525532664433'; return 'https://wa.me/' + n + '?text=' + encodeURIComponent(t || 'Hola, quiero hacer un pedido en BONTA'); }
   function abrirChat() {
     var c = window.BontaChat || window.bontaChat;
     if (c && typeof c.open === 'function') { c.open(); return; }
-    var b = document.querySelector('#bonta-chat-btn,#chatBtn,#chat-btn,#chat-toggle,.chat-btn,.chat-toggle,[data-chat],[aria-label*="chat" i]');
-    if (b) { b.click(); return; }
+    var l = [].slice.call(document.querySelectorAll('button,[role=button],a')).filter(function (e) { return /chat/i.test((e.id || '') + ' ' + e.className + ' ' + (e.getAttribute('aria-label') || '')) && !e.closest('.x-nav'); });
+    var f = l.filter(function (e) { var q = e.parentElement; return getComputedStyle(e).position === 'fixed' || (q && getComputedStyle(q).position === 'fixed'); })[0] || l[0];
+    if (f) { f.click(); return; }
     window.open(wa(), '_blank', 'noopener');
   }
+
+  /* ---------- Menú en el encabezado ---------- */
   var acciones = [
     ['Ver el menú', function () { go('menu'); }],
-    ['Armar mi pedido', function () { go('menu'); toast('Toca + en las pastas que quieras'); }],
-    ['Estado de mi pedido', abrirChat],
+    ['Armar mi pedido', function () { if (Object.keys(state.cart).length) document.getElementById('cartBtn').click(); else { go('menu'); toast('Toca + en las pastas que quieras'); } }],
+    ['Estado de mi pedido', function () { window.open(wa('Hola Bonta, quiero saber el estado de mi pedido. Mi folio es: '), '_blank', 'noopener'); }],
     ['Zonas y horarios', function () { go('entregas'); }],
     ['Preguntas frecuentes', abrirChat],
+    ['Quiénes somos', function () { abrirNosotros(); }],
+    ['Avisos legales', function () { abrirLegales(); }],
     ['Hablar por WhatsApp', function () { window.open(wa(), '_blank', 'noopener'); }]
   ];
-  var xc = document.getElementById('xChat');
-  if (xc) acciones.forEach(function (a, i) {
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (i % 2 ? ' ghost' : ''); b.textContent = a[0]; b.onclick = a[1]; xc.appendChild(b);
-  });
+  var top = document.querySelector('header.top'), cb = document.getElementById('cartBtn');
+  if (top && cb) {
+    var nav = document.createElement('nav'); nav.className = 'x-nav'; nav.setAttribute('aria-label', 'Menú principal');
+    acciones.forEach(function (a) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = a[0]; b.onclick = a[1]; nav.appendChild(b); });
+    top.insertBefore(nav, cb);
+  }
 
   /* ---------- Datos que dependen de tu hoja ---------- */
+  var FEDE_FOTO = '';   // opcional: liga de la foto de Fede si tu hoja Nosotros no tiene FOTO_1
+  var FEDE_TXT = ['Fede creció en un barrio donde casi el 70% de los vecinos eran italianos. A los 9 o 10 años empezó a cocinar pasta en casa, y a los 11 le regalaron un recetario de pastas y pizzas caseras: la cocina se volvió su lugar feliz.', 'Treinta años después sigue perfeccionando su técnica, pieza por pieza. La pasta de BONTA es italiana de corazón, con un toque mexicano propio.'];
   function pintar() {
     var d = state.data; if (!d) return;
     var p = document.getElementById('xPromos');
@@ -143,22 +164,25 @@
       (d.combos || []).forEach(function (c) {
         h += '<div class="x-promo"><h3>' + esc(c.nombre) + '</h3><p class="p">' + money(c.precio) + '</p><p>El descuento se aplica solo en tu carrito al juntar los productos del combo.</p><button type="button" data-x="menu">Armar combo</button></div>';
       });
+      d.productos.filter(function (x) { return x.enPromo && !x.agotado; }).forEach(function (x) {
+        h += '<div class="x-promo"><h3>' + esc(x.nombre) + '</h3><p class="p">' + money(x.precio) + ' <s style="font-size:.9rem;opacity:.8">' + money(x.precioRegular) + '</s></p><p>Precio de promoción.</p><button type="button" data-add="' + esc(x.id) + '">Agregar</button></div>';
+      });
       p.innerHTML = h;
-      p.onclick = function (e) { if (e.target.dataset.x) go(e.target.dataset.x); };
+      p.onclick = function (e) { if (e.target.dataset && e.target.dataset.x) go(e.target.dataset.x); };
     }
     var n = d.nosotros || {}, txt = String(n.historia || '').split(/\n{2,}/).map(function (s) { return s.trim(); }).filter(Boolean);
-    var sec = document.getElementById('historia');
-    if (sec) {
-      sec.hidden = !txt.length;
-      if (txt.length) {
-        var f = (n.fotos || []).map(imgUrl).filter(Boolean)[0];
-        document.getElementById('xHTitulo').textContent = n.titulo || 'Quiénes somos';
-        var hh = document.getElementById('xHist'); hh.className = 'x-historia' + (f ? ' con-foto' : '');
-        hh.innerHTML = (f ? '<img src="' + esc(f) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') +
-          '<div>' + txt.slice(0, 2).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
-          (txt.length > 2 ? '<button class="btn ghost" type="button" id="xMas">Leer más</button>' : '') + '</div>';
-        var m = document.getElementById('xMas'); if (m) m.onclick = abrirNosotros;
-      }
+    var propia = txt.length && !/^escribe aqu/i.test(txt[0]);
+    if (!propia) txt = FEDE_TXT;
+    var hh = document.getElementById('xHist');
+    if (hh) {
+      var f = (n.fotos || []).map(imgUrl).filter(Boolean)[0] || (FEDE_FOTO ? imgUrl(FEDE_FOTO) : '');
+      document.getElementById('xHTitulo').textContent = propia ? (n.titulo || 'Quiénes somos') : 'Fede, el chef detrás de cada receta';
+      hh.className = 'x-historia' + (f ? ' con-foto' : '');
+      hh.innerHTML = (f ? '<img src="' + esc(f) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') +
+        '<div>' + txt.slice(0, 2).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
+        (propia ? '' : '<blockquote>«La cocina es mi medio de expresión artística.»</blockquote>') +
+        (propia && txt.length > 2 ? '<button class="btn ghost" type="button" id="xMas">Leer más</button>' : '') + '</div>';
+      var m = document.getElementById('xMas'); if (m) m.onclick = abrirNosotros;
     }
     // Datos para Google
     document.title = 'BONTA · Pasta rellena artesanal congelada a domicilio en CDMX';
@@ -191,7 +215,26 @@
   }
 
   /* ---------- Engancharse a tu página sin cambiar su código ---------- */
-  if (typeof aplicarDatos === 'function') { var _ap = aplicarDatos; aplicarDatos = function (d) { _ap(d); pintar(); marid(); }; }
-  if (typeof renderGrid === 'function') { var _rg = renderGrid; renderGrid = function () { _rg(); marid(); }; }
-  if (state && state.data) { pintar(); marid(); }
+  function seguro(fn) { try { fn(); } catch (e) { if (window.console) console.error('extras.js', e); } }
+  if (typeof aplicarDatos === 'function') { var _ap = aplicarDatos; aplicarDatos = function (d) { _ap(d); seguro(pintar); seguro(marid); }; }
+  if (typeof renderGrid === 'function') { var _rg = renderGrid; renderGrid = function () { _rg(); seguro(marid); }; }
+  /* ---------- Código postal fuera de la zona: mínimo 2 pastas y cotización por WhatsApp ---------- */
+  var MSG_FUERA = 'Tu código postal está fuera de nuestra zona de entrega. Para tu zona el pedido mínimo es de 2 pastas y el envío tiene un costo adicional. Finaliza tu pedido y lo mandamos por WhatsApp para cotizarlo.';
+  function zonaFuera() {
+    var sh = document.getElementById('ship');
+    if (!sh || !sh.classList.contains('special')) return;
+    var ok = totales().pastas >= 2;
+    var msg = ok ? MSG_FUERA : MSG_FUERA + ' Agrega al menos 2 pastas para continuar.';
+    if (sh.textContent !== msg) sh.textContent = msg;
+    if (!ok) { document.getElementById('finish').disabled = true; var ft = document.getElementById('finishT'); if (ft) ft.disabled = true; }
+  }
+  var shp = document.getElementById('ship');
+  if (shp && window.MutationObserver) new MutationObserver(function () { seguro(zonaFuera); }).observe(shp, { childList: true, characterData: true, subtree: true, attributes: true });
+  var gr = document.getElementById('grid');
+  if (gr && window.MutationObserver) new MutationObserver(function () { seguro(marid); }).observe(gr, { childList: true });
+  var vez = 0;   // red de seguridad: revisa 30 s por si el enganche no alcanzó a correr
+  (function revisar() {
+    if (state && state.data) { var pr = document.getElementById('xPromos'); if (pr && !pr.children.length) seguro(pintar); seguro(marid); }
+    if (++vez < 40) setTimeout(revisar, 750);
+  })();
 })();
