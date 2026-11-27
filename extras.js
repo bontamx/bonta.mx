@@ -2,6 +2,8 @@
 ******************************************************************************
  ARCHIVO: extras.js  (FRONTEND · rediseño inspirado en la página del socio)
  DÓNDE VA: GitHub, repositorio bontamx/bonta.mx
+ ARCHIVOS A SUBIR (todos a la misma carpeta que index.html): extras.js, manifest.webmanifest,
+   favicon-32.png, icon-192.png, icon-512.png, icon-maskable-512.png, apple-touch-icon.png
  TIPO: ACTUALIZACIÓN. Reemplaza el extras.js que ya subiste. index.html NO se toca otra vez
        (si ya le pusiste la línea <script src="extras.js"></script>, no hagas nada más).
  PASOS:
@@ -27,6 +29,11 @@
    <meta property="og:title" content="BONTA · Pasta rellena artesanal lista en 5 minutos">
    <meta property="og:description" content="Del congelador a tu mesa. Entrega a domicilio en CDMX.">
    <meta property="og:type" content="website"><meta property="og:locale" content="es_MX">
+ ÍCONO (opcional, más seguro): en el <head> de index.html pega estas líneas:
+   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+   <link rel="manifest" href="manifest.webmanifest">
  ESTADO: escrito con tu index.html a la vista, pero NO probado en navegador.
    El botón que abre el chat busca tu botón por nombre; si no lo encuentra,
    abre WhatsApp. Con tu chat.js lo conecto exacto.
@@ -43,10 +50,21 @@
     /* Paleta del logo: #FFF1C0 #EFC86D #D4A43C #7F5C0E #2A1E16 #5A4A3C (edítala aquí) */
     ':root{--cream:color-mix(in srgb,#FFF1C0 40%,#fff);--paper:#fffdf6;--kraft:#EFC86D;--kraft-soft:#FFF1C0;--olive:#7F5C0E;--olive-dark:#2A1E16;--olive-soft:#FFF1C0;--gold:#D4A43C;--gold-text:#7F5C0E;--ink:#2A1E16;--muted:#5A4A3C;--line:#EBD9A6}',
     '.badge,.tag{color:#2A1E16}',
-    '.top{flex-wrap:wrap;gap:8px}',
-    '.x-nav{order:3;flex:1 0 100%;display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}',
-    '.x-nav::-webkit-scrollbar{display:none}.x-nav .chip{padding:6px 13px;font-size:.85rem;white-space:nowrap}',
-    '@media(min-width:1100px){.x-nav{order:0;flex:1 1 auto;justify-content:center;flex-wrap:wrap;overflow:visible}}',
+    '.top{gap:8px;padding:8px 12px}',
+    '.x-izq{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}',
+    '.x-burger{flex:0 0 auto;width:44px;height:44px;border:0;border-radius:12px;background:transparent;display:grid;place-content:center;gap:5px;cursor:pointer}',
+    '.x-burger i{display:block;width:24px;height:2.5px;border-radius:2px;background:var(--olive-dark);transition:transform .25s,opacity .2s}',
+    '.x-burger[aria-expanded="true"] i:nth-child(1){transform:translateY(7.5px) rotate(45deg)}.x-burger[aria-expanded="true"] i:nth-child(2){opacity:0}.x-burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}',
+    '.brand{font-family:"Cinzel",Georgia,serif;text-transform:uppercase;font-size:clamp(1.2rem,6vw,1.7rem);font-weight:600;letter-spacing:.14em;color:var(--gold-text);line-height:1;min-width:0}',
+    '.brand small{font-family:"Cinzel",Georgia,serif;font-size:clamp(.48rem,2.3vw,.62rem);font-weight:500;letter-spacing:.2em;margin-top:5px;color:var(--gold-text);display:flex;align-items:center;gap:6px;white-space:nowrap}',
+    '.brand small::before,.brand small::after{content:"";height:1px;width:clamp(6px,3vw,18px);background:var(--gold-text)}',
+    '.x-drop{position:absolute;left:8px;top:calc(100% + 6px);width:min(300px,calc(100vw - 16px));max-height:calc(100dvh - 84px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-up);padding:8px;display:none;z-index:45}',
+    '.x-drop.on{display:grid;gap:2px;animation:xdrop .2s ease-out}',
+    '@keyframes xdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}',
+    '.x-drop button{display:block;width:100%;text-align:left;min-height:46px;padding:12px 14px;border:0;border-radius:10px;background:none;color:var(--ink);font:700 1rem var(--sans)}',
+    '.x-drop button:hover,.x-drop button:focus-visible{background:var(--olive-soft)}',
+    '@media(max-width:480px){.cart-btn>span:not(.badge){display:none}.cart-btn{padding:9px 12px}}',
+    '.x-sec,#menu{scroll-margin-top:72px}',
     '.x-historia blockquote{font:italic 500 1.15rem var(--serif);color:var(--olive);margin:14px 0 0}',
     '.x-sec{max-width:1100px;margin:0 auto;padding:36px 20px}',
     '.x-sec h2{font-size:clamp(1.5rem,4.6vw,2.1rem);text-align:center}',
@@ -79,6 +97,15 @@
     '.mar-panel li button{border:0;border-radius:999px;background:var(--olive);color:var(--cream);padding:4px 12px;font-weight:700;font-size:.8rem}'
   ].join('');
   document.head.appendChild(css);
+
+  /* ---------- Ícono, instalación y tipografía del logo ---------- */
+  document.querySelectorAll('link[rel~="icon"],link[rel="apple-touch-icon"],link[rel="manifest"]').forEach(function (e) { e.remove(); });
+  [['icon', { type: 'image/png', sizes: '32x32', href: 'favicon-32.png' }], ['icon', { type: 'image/png', sizes: '192x192', href: 'icon-192.png' }],
+   ['apple-touch-icon', { sizes: '180x180', href: 'apple-touch-icon.png' }], ['manifest', { href: 'manifest.webmanifest' }],
+   ['stylesheet', { href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap' }]].forEach(function (x) {
+    var l = document.createElement('link'); l.rel = x[0]; for (var k in x[1]) l.setAttribute(k, x[1][k]); document.head.appendChild(l);
+  });
+  [['theme-color', '#7F5C0E'], ['apple-mobile-web-app-title', 'Bonta']].forEach(function (m) { var e = document.createElement('meta'); e.name = m[0]; e.content = m[1]; document.head.appendChild(e); });
 
   /* ---------- Hero ---------- */
   var h1 = document.querySelector('.hero h1');
@@ -146,11 +173,19 @@
     ['Avisos legales', function () { abrirLegales(); }],
     ['Hablar por WhatsApp', function () { window.open(wa(), '_blank', 'noopener'); }]
   ];
-  var top = document.querySelector('header.top'), cb = document.getElementById('cartBtn');
-  if (top && cb) {
-    var nav = document.createElement('nav'); nav.className = 'x-nav'; nav.setAttribute('aria-label', 'Menú principal');
-    acciones.forEach(function (a) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = a[0]; b.onclick = a[1]; nav.appendChild(b); });
-    top.insertBefore(nav, cb);
+  var top = document.querySelector('header.top'), cb = document.getElementById('cartBtn'), br = top && top.querySelector('.brand');
+  if (top && cb && br) {
+    var izq = document.createElement('div'); izq.className = 'x-izq';
+    var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'x-burger';
+    bt.setAttribute('aria-label', 'Abrir menú'); bt.setAttribute('aria-expanded', 'false'); bt.setAttribute('aria-controls', 'xDrop'); bt.innerHTML = '<i></i><i></i><i></i>';
+    var dd = document.createElement('nav'); dd.className = 'x-drop'; dd.id = 'xDrop'; dd.setAttribute('aria-label', 'Menú principal');
+    var cerrar = function (foco) { dd.classList.remove('on'); bt.setAttribute('aria-expanded', 'false'); bt.setAttribute('aria-label', 'Abrir menú'); if (foco) bt.focus(); };
+    acciones.forEach(function (a) { var b = document.createElement('button'); b.type = 'button'; b.textContent = a[0]; b.onclick = function () { cerrar(); a[1](); }; dd.appendChild(b); });
+    top.insertBefore(izq, br); izq.appendChild(bt); izq.appendChild(br); top.appendChild(dd);
+    bt.onclick = function () { if (dd.classList.contains('on')) cerrar(); else { dd.classList.add('on'); bt.setAttribute('aria-expanded', 'true'); bt.setAttribute('aria-label', 'Cerrar menú'); } };
+    document.addEventListener('click', function (e) { if (dd.classList.contains('on') && !dd.contains(e.target) && !bt.contains(e.target)) cerrar(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && dd.classList.contains('on')) cerrar(true); });
+    cb.addEventListener('click', function () { cerrar(); });
   }
 
   /* ---------- Datos que dependen de tu hoja ---------- */
