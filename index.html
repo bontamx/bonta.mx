@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <!--
 ******************************************************************************
- ARCHIVO: index.html  (FRONTEND · Etapa C1) · VERSIÓN PARA GITHUB (con chat)
+ ARCHIVO: index.html  (FRONTEND · Etapa C2) · VERSIÓN PARA GITHUB (con chat)
  DÓNDE VA: GitHub, repositorio bontamx/bonta.mx, archivo index.html
  TIPO: ACTUALIZACIÓN (reemplaza TODO el contenido del index.html actual)
- CAMBIO: muestra "Agotado" y limita cantidades cuando el servidor manda existencias.
-         Si el control está apagado, funciona como antes. chat.js no cambia.
- PASOS: GitHub > index.html > lápiz > Ctrl+A > pega esto > Commit changes.
-        Espera 1-2 min y recarga con Ctrl+F5.
- ESTADO: probado en un navegador con datos simulados; NO con tu servidor real.
+ CAMBIO: (1) «Lo antes posible» solo de lunes a sábado, 9:00 a 21:00 (entregas siguen 10:00 a 22:00).
+         (2) Encargos: si el Panel los activa (Ajustes > ENCARGO_DIAS_HABILES) los productos agotados se pueden pedir
+             "Por encargo" con entrega programada desde la fecha mínima que manda el Panel.
+         (3) Transferencia: avisa cuánto tiempo hay para pagar antes de que el pedido expire.
+         Si el Panel no manda encargos, funciona como antes. chat.js no cambia.
+ PASOS: Súbelo DESPUÉS de instalar Code.gs, Existencias.gs y VentasWeb.gs en el Panel.
+        GitHub > index.html > lápiz > Ctrl+A > pega esto > Commit changes. Espera 1-2 min y recarga con Ctrl+F5.
+ ESTADO: probado solo con comprobación de sintaxis; NO probado en un navegador ni con tu servidor real.
 ******************************************************************************
 -->
 <html lang="es-MX">
@@ -369,7 +372,7 @@ footer strong{font-family:var(--serif);color:var(--olive-dark)}
             <label class="radio"><input type="radio" name="modo" value="ahora" id="modoAhora" checked> Lo antes posible</label>
             <label class="radio"><input type="radio" name="modo" value="programada" id="modoProg"> Programar entrega</label>
             <div id="progWrap" hidden><input id="fecha" type="date"><select id="hora" aria-label="Hora de entrega"></select></div>
-            <small>Servicio de lunes a sábado, de 10:00 a 22:00 h.</small>
+            <small>Entregas de lunes a sábado, de 10:00 a 22:00 h. «Lo antes posible» está disponible de 9:00 a 21:00 h.</small>
           </fieldset>
         </div>
       </div>
@@ -554,8 +557,13 @@ function aplicarDatos(d) {
 
 /* ---------- Menú ---------- */
 /* Existencias: el servidor manda maximo/agotado solo si el control está activado */
+/* Encargos (C2): si el Panel manda ajustes.encargo, se puede pedir más de lo disponible con entrega programada desde esa fecha */
+function esEncargo() { const e = state.data && state.data.ajustes && state.data.ajustes.encargo; return e && e.desde ? e : null; }
+function porEncargo(id) { const p = state.byId[id]; return p && typeof p.maximo === 'number' ? Math.max(0, (state.cart[id] || 0) - p.maximo) : 0; }
+function hayEncargo() { return !!esEncargo() && Object.keys(state.cart).some(id => state.byId[id] && porEncargo(id) > 0); }
 function tope(id) {
   const p = state.byId[id];
+  if (p && esEncargo() && typeof p.maximo === 'number') return 99;
   if (p && p.agotado) return 0;
   return p && typeof p.maximo === 'number' ? Math.min(99, Math.max(0, p.maximo)) : 99;
 }
@@ -570,9 +578,9 @@ function renderGrid() {
   const lista = state.data.productos.filter(p => state.filtro === 'Todas' || p.categoria === state.filtro);
   if (!lista.length) { $('#grid').innerHTML = '<div class="state">Pronto tendremos nuevos platillos. ¡Vuelve en un rato!</div>'; return; }
   $('#grid').innerHTML = lista.map((p, i) => `
-    <article class="card${p.agotado ? ' agotado' : ''}" style="animation-delay:${Math.min(i, 8) * 50}ms">
+    <article class="card${p.agotado && !esEncargo() ? ' agotado' : ''}" style="animation-delay:${Math.min(i, 8) * 50}ms">
       <button class="card-open" type="button" data-open="${esc(p.id)}" aria-label="Ver ${esc(p.nombre)}">
-        <div class="media">${mediaHTML(p, p.agotado ? '<span class="tag fuera">Agotado</span>' : (p.enPromo ? '<span class="tag">Promoción</span>' : ''))}</div>
+        <div class="media">${mediaHTML(p, p.agotado ? (esEncargo() ? '<span class="tag">Por encargo</span>' : '<span class="tag fuera">Agotado</span>') : (p.enPromo ? '<span class="tag">Promoción</span>' : ''))}</div>
         <div class="card-body">
           <span class="cat">${esc(p.categoria)}</span>
           <h3>${esc(p.nombre)}</h3>
@@ -580,7 +588,7 @@ function renderGrid() {
           <div class="price-row"><span class="price">${money(p.precio)}</span>${p.enPromo ? `<span class="was">${money(p.precioRegular)}</span>` : ''}</div>
         </div>
       </button>
-      <button class="card-add" type="button" data-add="${esc(p.id)}" ${p.agotado ? 'disabled' : ''} aria-label="${p.agotado ? 'Agotado: ' : 'Agregar al carrito: '}${esc(p.nombre)}">+</button>
+      <button class="card-add" type="button" data-add="${esc(p.id)}" ${p.agotado && !esEncargo() ? 'disabled' : ''} aria-label="${p.agotado && !esEncargo() ? 'Agotado: ' : 'Agregar al carrito: '}${esc(p.nombre)}">+</button>
     </article>`).join('');
 }
 
@@ -613,7 +621,7 @@ document.addEventListener('keydown', e => {
 function abrirDetalle(id) {
   const p = state.byId[id]; if (!p) return;
   state.modalId = id; state.modalQty = 1;
-  $('#mMedia').innerHTML = mediaHTML(p, p.agotado ? '<span class="tag fuera">Agotado</span>' : (p.enPromo ? '<span class="tag">Promoción</span>' : ''));
+  $('#mMedia').innerHTML = mediaHTML(p, p.agotado ? (esEncargo() ? '<span class="tag">Por encargo</span>' : '<span class="tag fuera">Agotado</span>') : (p.enPromo ? '<span class="tag">Promoción</span>' : ''));
   $('#mCat').textContent = p.categoria;
   $('#mTitulo').textContent = p.nombre;
   $('#mDesc').textContent = p.descripcion || '';
@@ -682,7 +690,7 @@ function ahoraMX() {
   const dow = new Date(Date.UTC(+p.year, +p.month - 1, +p.day)).getUTCDay();
   return { ymd, min: h * 60 + +p.minute, dow };
 }
-const enServicio = () => { const a = ahoraMX(); return a.dow !== 0 && a.min >= 600 && a.min < 1320; };
+const enServicio = () => { const a = ahoraMX(); return a.dow !== 0 && a.min >= 540 && a.min <= 1260; };   // "lo antes posible": salidas L-S 9:00-21:00
 function llenarHoras() {
   const sel = $('#hora'); if (sel.options.length) return;
   for (let m = 600; m <= 1320; m += 30) { const t = String(Math.floor(m / 60)).padStart(2, '0') + ':' + (m % 60 ? '30' : '00'); sel.add(new Option(t + ' h', t)); }
@@ -698,6 +706,11 @@ function errorEntrega() {
   if (e.telefono.length !== 10) return 'Escribe tu teléfono de 10 dígitos.';
   if (e.recibe.length < 2) return 'Escribe quién recibe el pedido.';
   if (e.direccion.length < 3) return 'Escribe tu dirección (calle, colonia y referencias; "s/n" es válido).';
+  if (hayEncargo()) {
+    const enc = esEncargo(), d = enc.desde.split('-').reverse().join('/');
+    if (e.entregaModo !== 'programada' || !e.entregaFecha) return 'Tu pedido incluye productos por encargo: elige una fecha de entrega a partir del ' + d + '.';
+    if (e.entregaFecha < enc.desde) return 'Los productos por encargo se entregan a partir del ' + d + '. Elige otra fecha.';
+  }
   if (e.entregaModo === 'ahora') return enServicio() ? '' : 'Ahora estamos fuera de horario: programa tu entrega.';
   if (!e.entregaFecha) return 'Elige la fecha de entrega.';
   if (new Date(e.entregaFecha + 'T00:00:00Z').getUTCDay() === 0) return 'No entregamos en domingo. Elige de lunes a sábado.';
@@ -737,11 +750,11 @@ function renderResumen() {
   $('#entregaWrap').hidden = !conEntrega;
   if (conEntrega) {
     llenarHoras();
-    const abierto = enServicio();
+    const abierto = enServicio() && !hayEncargo();
     $('#modoAhora').disabled = !abierto;
     if (!abierto && $('#modoAhora').checked) $('#modoProg').checked = true;
     $('#progWrap').hidden = !$('#modoProg').checked;
-    $('#fecha').min = ahoraMX().ymd;
+    $('#fecha').min = hayEncargo() ? esEncargo().desde : ahoraMX().ymd;
   }
   const errE = conEntrega ? errorEntrega() : '';
   $('#entregaMsg').hidden = !errE; $('#entregaMsg').textContent = errE;
@@ -786,7 +799,8 @@ async function finalizar(metodo = 'tarjeta') {
     if (r.transferencia) {
       state.cart = {}; guardarCarrito(); renderCart(); cerrarCapa($('#cartLayer'));
       const tr = r.transferencia;
-      mostrarListo({ titulo: 'Paga por transferencia', texto: 'Haz tu transferencia y, para confirmar tu pedido, envíanos el comprobante por WhatsApp con el botón de abajo.', link: r.waUrl, linkTxt: 'Enviar comprobante por WhatsApp',
+      const pl = r.plazoMin ? (r.plazoMin >= 60 ? `${Math.floor(r.plazoMin / 60)} h${r.plazoMin % 60 ? ' ' + (r.plazoMin % 60) + ' min' : ''}` : `${r.plazoMin} min`) : '';
+      mostrarListo({ titulo: 'Paga por transferencia', texto: 'Haz tu transferencia y, para confirmar tu pedido, envíanos el comprobante por WhatsApp con el botón de abajo.' + (pl ? ` Tienes ${pl} para pagar; después el pedido expira y se liberan las piezas.` : '') + (r.encargo ? ' Tu pedido incluye productos por encargo: los preparamos para la fecha que elegiste.' : ''), link: r.waUrl, linkTxt: 'Enviar comprobante por WhatsApp',
         html: `<p>Banco: <b>${esc(tr.banco || '—')}</b></p><p>Titular: <b>${esc(tr.titular || '—')}</b></p><p>CLABE: <b>${esc(tr.clabe)}</b></p><p>Concepto: <b>${esc(tr.concepto)}</b></p><p>Monto: <b>${money(r.total)}</b></p>` });
       return;
     }
