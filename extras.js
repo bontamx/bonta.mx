@@ -58,7 +58,7 @@
     '.brand{font-family:"Cinzel",Georgia,serif;text-transform:uppercase;font-size:clamp(1.2rem,6vw,1.7rem);font-weight:600;letter-spacing:.14em;color:var(--gold-text);line-height:1;min-width:0}',
     '.brand small{font-family:"Cinzel",Georgia,serif;font-size:clamp(.48rem,2.3vw,.62rem);font-weight:500;letter-spacing:.2em;margin-top:5px;color:var(--gold-text);display:flex;align-items:center;gap:6px;white-space:nowrap}',
     '.brand small::before,.brand small::after{content:"";height:1px;width:clamp(6px,3vw,18px);background:var(--gold-text)}',
-    '.x-drop{position:absolute;left:8px;top:calc(100% + 6px);width:min(300px,calc(100vw - 16px));max-height:calc(100dvh - 84px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-up);padding:8px;display:none;z-index:45}',
+    '.x-drop{position:absolute;left:8px;top:calc(100% + 6px);width:min(300px,calc(100vw - 16px));max-height:calc(100dvh - 84px);overflow:auto;background:var(--cream);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-up);padding:8px;display:none;z-index:45}',
     '.x-drop.on{display:grid;gap:2px;animation:xdrop .2s ease-out}',
     '@keyframes xdrop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}',
     '.x-drop button{display:block;width:100%;text-align:left;min-height:46px;padding:12px 14px;border:0;border-radius:10px;background:none;color:var(--ink);font:700 1rem var(--sans)}',
@@ -111,7 +111,7 @@
   var h1 = document.querySelector('.hero h1');
   if (h1) h1.textContent = 'Pasta rellena artesanal, del congelador a tu mesa en 5 minutos';
   var eb = document.querySelector('.hero .eyebrow');
-  if (eb) eb.textContent = 'Hecho a mano. Hecho con el corazón.';
+  if (eb) eb.textContent = 'Hecho a mano. Hecho con amor.';
   var inf = document.querySelector('.hero .info');
   if (inf) inf.style.display = 'none';
   if (HERO_FOTO && typeof imgUrl === 'function') {
@@ -145,7 +145,7 @@
     '<li><b>Fuego medio: agua temblando, no a borbotones</b><span>El hervor fuerte golpea las piezas y las abre.</span></li>' +
     '<li><b>No la sobrecuezas</b><span>Son 5 minutos (gnocchi, de 3 a 4). Pasarte ablanda la masa y suelta el relleno. Revisa la etiqueta de tu paquete.</span></li>' +
     '<li><b>Escurre sin sacudir</b><span>Hazlo con cuidado y sirve enseguida con tu salsa.</span></li></ol></section>' +
-    '<section class="x-sec x-alt" id="historia"><h2 id="xHTitulo">Quiénes somos</h2><div class="x-historia" id="xHist"></div></section>' +
+    '<section class="x-sec x-alt" id="historia"><h2 id="xHTitulo">Fede, el chef detrás de cada receta</h2><div class="x-historia" id="xHist"></div></section>' +
     '<section class="x-sec" id="entregas"><h2>Entregas</h2><p class="x-sub">Todo a domicilio, bien congelado.</p><div class="x-pasos">' +
     '<div class="x-box"><h3>Horario</h3><p>Servicio de lunes a sábado, de 10:00 a 22:00 h. Puedes programar tu entrega al pagar.</p></div>' +
     '<div class="x-box"><h3>Cobertura</h3><p>Escribe tu código postal en el carrito y te decimos al instante si llegamos y cuánto cuesta el envío. Fuera de la zona: pedido mínimo de 2 pastas y envío con costo adicional, cotizado por WhatsApp.</p></div>' +
@@ -169,6 +169,7 @@
     ['Estado de mi pedido', function () { window.open(wa('Hola Bonta, quiero saber el estado de mi pedido. Mi folio es: '), '_blank', 'noopener'); }],
     ['Zonas y horarios', function () { go('entregas'); }],
     ['Preguntas frecuentes', abrirChat],
+    ['Quién es Fede', function () { go('historia'); }],
     ['Quiénes somos', function () { abrirNosotros(); }],
     ['Avisos legales', function () { abrirLegales(); }],
     ['Hablar por WhatsApp', function () { window.open(wa(), '_blank', 'noopener'); }]
@@ -189,7 +190,7 @@
   }
 
   /* ---------- Datos que dependen de tu hoja ---------- */
-  var FEDE_FOTO = '';   // opcional: liga de la foto de Fede si tu hoja Nosotros no tiene FOTO_1
+  var FEDE_FOTO = '';   // pega aquí la liga de la foto de Fede (Drive o ruta, como imagenes/fede.webp); vacío = sin foto
   var FEDE_TXT = ['Fede creció en un barrio donde casi el 70% de los vecinos eran italianos. A los 9 o 10 años empezó a cocinar pasta en casa, y a los 11 le regalaron un recetario de pastas y pizzas caseras: la cocina se volvió su lugar feliz.', 'Treinta años después sigue perfeccionando su técnica, pieza por pieza. La pasta de BONTA es italiana de corazón, con un toque mexicano propio.'];
   function pintar() {
     var d = state.data; if (!d) return;
@@ -205,18 +206,15 @@
       p.innerHTML = h;
       p.onclick = function (e) { if (e.target.dataset && e.target.dataset.x) go(e.target.dataset.x); };
     }
-    var n = d.nosotros || {}, txt = String(n.historia || '').split(/\n{2,}/).map(function (s) { return s.trim(); }).filter(Boolean);
-    var propia = txt.length && !/^escribe aqu/i.test(txt[0]);
-    if (!propia) txt = FEDE_TXT;
-    var hh = document.getElementById('xHist');
+    var hh = document.getElementById('xHist');   // Sección de Fede (siempre). La historia de tu hoja Nosotros se ve en el botón "Quiénes somos".
     if (hh) {
-      var f = (n.fotos || []).map(imgUrl).filter(Boolean)[0] || (FEDE_FOTO ? imgUrl(FEDE_FOTO) : '');
-      document.getElementById('xHTitulo').textContent = propia ? (n.titulo || 'Quiénes somos') : 'Fede, el chef detrás de cada receta';
+      var f = FEDE_FOTO ? imgUrl(FEDE_FOTO) : '';
+      document.getElementById('xHTitulo').textContent = 'Fede, el chef detrás de cada receta';
       hh.className = 'x-historia' + (f ? ' con-foto' : '');
-      hh.innerHTML = (f ? '<img src="' + esc(f) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') +
-        '<div>' + txt.slice(0, 2).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
-        (propia ? '' : '<blockquote>«La cocina es mi medio de expresión artística.»</blockquote>') +
-        (propia && txt.length > 2 ? '<button class="btn ghost" type="button" id="xMas">Leer más</button>' : '') + '</div>';
+      hh.innerHTML = (f ? '<img src="' + esc(f) + '" alt="Fede, chef de Bonta" loading="lazy" referrerpolicy="no-referrer">' : '') +
+        '<div>' + FEDE_TXT.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
+        '<blockquote>«La cocina es mi medio de expresión artística.»</blockquote>' +
+        '<button class="btn ghost" type="button" id="xMas" style="margin-top:14px">Conoce a Bonta</button></div>';
       var m = document.getElementById('xMas'); if (m) m.onclick = abrirNosotros;
     }
     // Datos para Google
