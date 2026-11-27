@@ -111,7 +111,7 @@
   var h1 = document.querySelector('.hero h1');
   if (h1) h1.textContent = 'Pasta rellena artesanal, del congelador a tu mesa en 5 minutos';
   var eb = document.querySelector('.hero .eyebrow');
-  if (eb) eb.textContent = 'Hecho a mano. Hecho con amor.';
+  if (eb) eb.textContent = 'Hecho a mano. Hecho con el corazón.';
   var inf = document.querySelector('.hero .info');
   if (inf) inf.style.display = 'none';
   if (HERO_FOTO && typeof imgUrl === 'function') {
